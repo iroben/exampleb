@@ -1,0 +1,24 @@
+version: '3'
+services:
+  examplea:
+    image: {{docker registry}}/dev/examplea:latest
+    ports:
+      - "8000:8000"
+  example-front:
+    image: {{docker registry}}/dev/example-front:latest
+    ports:
+      - "8080:80"
+
+  exampleb:
+    image: golang:1.19.5
+    working_dir: "/go/src/exampleb"
+    # 调试模式，请制作一个包含go和delve的镜像
+#    command: [ "dlv", "debug", "--headless", "--listen=:2345", "--api-version=2", "--accept-multiclient", "main.go" ]
+    command: [ "go","run","main.go" ]
+    volumes:
+      - .:/go/src/exampleb
+    depends_on:
+      - examplea
+      - example-front
+    ports:
+      - "2345:2345"
